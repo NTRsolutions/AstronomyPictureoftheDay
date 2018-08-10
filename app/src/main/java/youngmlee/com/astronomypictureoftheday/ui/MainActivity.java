@@ -1,5 +1,7 @@
 package youngmlee.com.astronomypictureoftheday.ui;
 
+import android.app.Activity;
+import android.app.Application;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements FragmentChangeLis
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mSharedViewModel = ViewModelProviders.of(this).get(SharedViewModel.class);

@@ -1,35 +1,29 @@
 package youngmlee.com.astronomypictureoftheday.domain;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.paging.DataSource;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Executor;
-
-import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import youngmlee.com.astronomypictureoftheday.domain.database.AppDao;
 import youngmlee.com.astronomypictureoftheday.domain.model.Picture;
-import youngmlee.com.astronomypictureoftheday.network.RetrofitApi;
+import youngmlee.com.astronomypictureoftheday.network.RetrofitService;
 import youngmlee.com.astronomypictureoftheday.utils.DateUtil;
 
 public class Repository {
 
-    private RetrofitApi retrofitApi;
+    private RetrofitService retrofitService;
     private AppDao appDao;
 
 
-    public Repository(RetrofitApi retrofitApi, AppDao appDao){
-        this.retrofitApi = retrofitApi;
+    public Repository(RetrofitService retrofitService, AppDao appDao){
+        this.retrofitService = retrofitService;
         this.appDao = appDao;
     }
 
@@ -40,7 +34,7 @@ public class Repository {
     //First gets latestDate
     //Second gets List using latestDate
     public void retrieveData(final RepositoryCallbacks repositoryCallbacks){
-        Call<Picture> call = retrofitApi.getLatestPicture();
+        Call<Picture> call = retrofitService.getLatestPicture();
         call.enqueue(new Callback<Picture>() {
             @Override
             public void onResponse(Call<Picture> call, Response<Picture> response) {
@@ -60,7 +54,7 @@ public class Repository {
     }
 
     private void retrievePictureList(String startDate, String endDate, final RepositoryCallbacks repositoryCallbacks){
-        Call<List<Picture>> call = retrofitApi.getPicturesFromDateRange(startDate, endDate);
+        Call<List<Picture>> call = retrofitService.getPicturesFromDateRange(startDate, endDate);
         call.enqueue(new Callback<List<Picture>>() {
             @Override
             public void onResponse(Call<List<Picture>> call, Response<List<Picture>> response) {
@@ -95,6 +89,7 @@ public class Repository {
 
 
     private void processPictures(List<Picture> pictures){
+
         Collections.reverse(pictures);
         for (Iterator<Picture> iterator = pictures.iterator(); iterator.hasNext();) {
             Picture picture = iterator.next();
@@ -107,7 +102,7 @@ public class Repository {
     public void loadMoreData(String lastVisibleDate){
         String endDate = lastVisibleDate;
         String startDate = DateUtil.subtractDays(endDate, 15);
-        Call<List<Picture>> call = retrofitApi.getPicturesFromDateRange(startDate, endDate);
+        Call<List<Picture>> call = retrofitService.getPicturesFromDateRange(startDate, endDate);
         call.enqueue(new Callback<List<Picture>>() {
             @Override
             public void onResponse(Call<List<Picture>> call, Response<List<Picture>> response) {

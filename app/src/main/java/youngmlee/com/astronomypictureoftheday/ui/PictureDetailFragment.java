@@ -67,12 +67,9 @@ public class PictureDetailFragment extends Fragment{
 
     private void updateUi(List<Picture> pictureList){
         String url = NetworkUtil.validateUrl(pictureList.get(mPosition).getUrl());
-        //Picasso.get().load(url).fit().centerCrop().into(mDetailPictureImageView);
+        Picasso.get().load(url).fit().centerCrop().into(mDetailPictureImageView);
         mDescriptionTextView.setText(pictureList.get(mPosition).getExplanation());
-        Glide.with(getContext())
-                .load(url)
-                .apply(ImageUtil.getDetailImageRequestOptions())
-                .into(mDetailPictureImageView);
+        //Glide.with(getContext()).load(url).apply(ImageUtil.getDetailImageRequestOptions()).into(mDetailPictureImageView);
     }
 
     private void connectImageViewOnClickListener(final List<Picture> pictureList){

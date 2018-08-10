@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import youngmlee.com.astronomypictureoftheday.R;
 import youngmlee.com.astronomypictureoftheday.domain.model.Picture;
@@ -46,16 +47,13 @@ public class PictureListAdapter extends ListAdapter<Picture, PictureListAdapter.
         viewHolder.mPictureCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    viewHolder.mPictureImageView.setTransitionName(picture.getTitle());
-                }
                 mFragmentChangeListener.attachDetailViewPager(position, viewHolder.mPictureImageView);
             }
         });
         String url = NetworkUtil.validateUrl(picture.getUrl());
         viewHolder.mDateTextView.setText(picture.getDate());
-        //Picasso.get().load(url).fit().centerCrop().into(viewHolder.mPictureImageView);
-        Glide.with(mContext).load(url).apply(ImageUtil.getListImageRequestOptions()).into(viewHolder.mPictureImageView);
+        Picasso.get().load(url).fit().centerCrop().into(viewHolder.mPictureImageView);
+        //Glide.with(mContext).load(url).apply(ImageUtil.getListImageRequestOptions()).into(viewHolder.mPictureImageView);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

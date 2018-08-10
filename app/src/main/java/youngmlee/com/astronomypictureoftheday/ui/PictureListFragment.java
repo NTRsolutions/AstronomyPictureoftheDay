@@ -95,7 +95,7 @@ public class PictureListFragment extends Fragment{
 
     @Override
     public void onPause() {
-        mRecyclerView.clearOnScrollListeners();
+        //mRecyclerView.clearOnScrollListeners();
         super.onPause();
     }
 }

@@ -94,7 +94,7 @@ public class PictureDetailViewPager extends Fragment {
 
     @Override
     public void onPause() {
-        mViewPager.clearOnPageChangeListeners();
+       // mViewPager.clearOnPageChangeListeners();
         super.onPause();
     }
 

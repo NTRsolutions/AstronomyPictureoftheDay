@@ -9,7 +9,7 @@ import dagger.Module;
 import dagger.Provides;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import youngmlee.com.astronomypictureoftheday.network.RetrofitApi;
+import youngmlee.com.astronomypictureoftheday.network.RetrofitService;
 
 @Module
 public class NetworkModule {
@@ -33,8 +33,8 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public RetrofitApi provideRetrofitApi(Retrofit retrofit){
-        RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
-        return retrofitApi;
+    public RetrofitService provideRetrofitApi(Retrofit retrofit){
+        RetrofitService retrofitService = retrofit.create(RetrofitService.class);
+        return retrofitService;
     }
 }

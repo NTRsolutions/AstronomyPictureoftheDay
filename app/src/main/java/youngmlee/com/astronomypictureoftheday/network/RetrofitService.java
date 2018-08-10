@@ -7,7 +7,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 import youngmlee.com.astronomypictureoftheday.domain.model.Picture;
 
-public interface RetrofitApi {
+public interface RetrofitService {
 
     String API_KEY = "by7f1UzvduUbyBREtFQWHtYR1HUkH6pmWgSXhn2c";
 
