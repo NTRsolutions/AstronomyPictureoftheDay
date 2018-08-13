@@ -12,6 +12,7 @@ import android.transition.Fade;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toolbar;
 
 import youngmlee.com.astronomypictureoftheday.R;
 import youngmlee.com.astronomypictureoftheday.viewModel.SharedViewModel;
@@ -26,13 +27,16 @@ public class MainActivity extends AppCompatActivity implements FragmentChangeLis
 
 
     private SharedViewModel mSharedViewModel;
+    private android.support.v7.widget.Toolbar mToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.tb_main_activity);
+        setSupportActionBar(mToolbar);
+
         mSharedViewModel = ViewModelProviders.of(this).get(SharedViewModel.class);
         if (findViewById(R.id.fragment_container) != null){
             if(savedInstanceState != null){
@@ -42,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements FragmentChangeLis
         loadInitialData();
         loadInitialFragment();
     }
+
 
     private void loadInitialData(){
         mSharedViewModel.loadInitialData(new ViewModelCallbacks() {
@@ -114,10 +119,14 @@ public class MainActivity extends AppCompatActivity implements FragmentChangeLis
                 .addToBackStack(TAG_PICTURE_LIST_FRAGMENT)
                 .commit();
     }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return false;
+    }
 
     @Override
     public void onBackPressed() {
-
         Log.d("BACKSTACKTEST", ""+ getSupportFragmentManager().getBackStackEntryCount());
         if(getSupportFragmentManager().getBackStackEntryCount() == 1){
             finish();

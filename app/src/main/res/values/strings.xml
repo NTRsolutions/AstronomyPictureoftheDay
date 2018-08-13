@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Astronomy Picture of the Day</string>
     <string name="picture_transition">Picture Transition</string>
+    <string name="about_header">ABOUT THIS PICTURE</string>
 </resources>

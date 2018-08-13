@@ -51,7 +51,6 @@ public class PictureListAdapter extends ListAdapter<Picture, PictureListAdapter.
             }
         });
         String url = NetworkUtil.validateUrl(picture.getUrl());
-        viewHolder.mDateTextView.setText(picture.getDate());
         Picasso.get().load(url).fit().centerCrop().into(viewHolder.mPictureImageView);
         //Glide.with(mContext).load(url).apply(ImageUtil.getListImageRequestOptions()).into(viewHolder.mPictureImageView);
     }
@@ -60,13 +59,11 @@ public class PictureListAdapter extends ListAdapter<Picture, PictureListAdapter.
 
         final CardView mPictureCardView;
         final ImageView mPictureImageView;
-        final TextView mDateTextView;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             mPictureCardView = itemView.findViewById(R.id.cv_picture);
             mPictureImageView = itemView.findViewById(R.id.iv_picture);
-            mDateTextView = itemView.findViewById(R.id.tv_date);
         }
     }
 }

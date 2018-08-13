@@ -33,8 +33,10 @@ public class PictureDetailFragment extends Fragment{
 
     public static final String EXTRA_KEY_PICTURE_POSITION = "extra_key_picture_position";
 
-    ImageView mDetailPictureImageView;
-    TextView mDescriptionTextView;
+    private ImageView mDetailPictureImageView;
+    private TextView mDescriptionTextView;
+    private TextView mTitleTextView;
+    private TextView mCopyrightTextView;
 
     private SharedViewModel mSharedViewModel;
     private FragmentChangeListener fragmentChangeListener;
@@ -46,6 +48,9 @@ public class PictureDetailFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_picture_detail, container, false);
         mDescriptionTextView = (TextView) view.findViewById(R.id.tv_detail_description);
         mDetailPictureImageView = (ImageView) view.findViewById(R.id.iv_detail_picture);
+        mTitleTextView = (TextView) view.findViewById(R.id.tv_title);
+        mCopyrightTextView = (TextView) view.findViewById(R.id.tv_copyright);
+
         if(getArguments() != null) {
             mPosition = getArguments().getInt(EXTRA_KEY_PICTURE_POSITION);
         }
@@ -69,6 +74,13 @@ public class PictureDetailFragment extends Fragment{
         String url = NetworkUtil.validateUrl(pictureList.get(mPosition).getUrl());
         Picasso.get().load(url).fit().centerCrop().into(mDetailPictureImageView);
         mDescriptionTextView.setText(pictureList.get(mPosition).getExplanation());
+        mTitleTextView.setText(pictureList.get(mPosition).getTitle());
+        if(pictureList.get(mPosition).getCopyright() != null) {
+            mCopyrightTextView.setText(pictureList.get(mPosition).getCopyright());
+        }
+        else{
+            mCopyrightTextView.setVisibility(View.GONE);
+        }
         //Glide.with(getContext()).load(url).apply(ImageUtil.getDetailImageRequestOptions()).into(mDetailPictureImageView);
     }
 

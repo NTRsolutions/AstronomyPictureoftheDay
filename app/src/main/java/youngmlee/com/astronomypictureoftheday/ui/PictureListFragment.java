@@ -7,10 +7,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.SharedElementCallback;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,8 +34,19 @@ public class PictureListFragment extends Fragment{
     private LinearLayoutManager mLinearLayoutManager;
     private String lastVisibleDate;
     private boolean isLoadingMoreData;
-    private boolean mAlreadyLoaded;
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        connectActionbar();
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    private void connectActionbar(){
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setTitle(R.string.app_name);
+    }
 
     @Nullable
     @Override

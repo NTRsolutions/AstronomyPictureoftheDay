@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.SharedElementCallback;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
@@ -29,10 +31,16 @@ public class PictureDetailViewPager extends Fragment {
     private String lastVisibleDate;
     private boolean isLoadingMoreData;
     private int initialClickedPosition;
-    private boolean mAlreadyLoaded;
 
 
     public static final String EXTRA_KEY_CLICKED_POSITION = "extra_key_clicked_position";
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        connectActionbar();
+        super.onActivityCreated(savedInstanceState);
+    }
+
 
 
     @Nullable
@@ -47,6 +55,12 @@ public class PictureDetailViewPager extends Fragment {
         connectViewModel();
         connectPageChangeListener();
         return view;
+    }
+
+    private void connectActionbar(){
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
 

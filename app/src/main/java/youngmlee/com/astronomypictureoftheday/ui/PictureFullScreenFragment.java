@@ -20,6 +20,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +51,18 @@ public class PictureFullScreenFragment extends Fragment {
     private FloatingActionButton mWallpaperFab;
     private FloatingActionButton mSaveFab;
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        connectActionbar();
+    }
+
+    private void connectActionbar(){
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -73,7 +87,6 @@ public class PictureFullScreenFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 onShareItem();
-                Toast.makeText(getContext(), "Sharing...", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -81,7 +94,6 @@ public class PictureFullScreenFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 onSetWallPaper();
-                Toast.makeText(getContext(), "Setting Wallpaper...", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -129,7 +141,6 @@ public class PictureFullScreenFragment extends Fragment {
     }
 
     private void onSaveImage(){
-        Toast.makeText(getContext(), "Saving...", Toast.LENGTH_SHORT).show();
         Picasso.get().load(mImageUrl).into(new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -148,15 +159,14 @@ public class PictureFullScreenFragment extends Fragment {
     private void shareImage(Bitmap bitmap){
         Uri contentUri = getCacheImageUri(bitmap);
         Log.d("SAVETEST", "uri: " + contentUri.toString());
-        if(contentUri != null){
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            shareIntent.setDataAndType(contentUri, getContext().getContentResolver().getType(contentUri));
-            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-            shareIntent.setType("image/png");
-            startActivity(Intent.createChooser(shareIntent, "Share via: "));
-        }
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        shareIntent.setDataAndType(contentUri, getContext().getContentResolver().getType(contentUri));
+        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+        shareIntent.setType("image/png");
+        startActivity(Intent.createChooser(shareIntent, "Share via: "));
     }
 
 
@@ -179,6 +189,7 @@ public class PictureFullScreenFragment extends Fragment {
 
 
     private void saveBitmapToExternal(Bitmap bitmap){
+        Toast.makeText(getContext(), "Saving...", Toast.LENGTH_SHORT).show();
         Log.d("AVAILABLE: ",  ""+ isExternalStorageWritable());
         String imageName = System.currentTimeMillis() + ".jpg";
         File imageRoot = getPublicPictureStorageDir();
