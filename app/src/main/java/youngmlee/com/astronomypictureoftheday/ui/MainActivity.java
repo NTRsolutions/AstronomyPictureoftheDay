@@ -14,6 +14,11 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toolbar;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import youngmlee.com.astronomypictureoftheday.R;
 import youngmlee.com.astronomypictureoftheday.viewModel.SharedViewModel;
 import youngmlee.com.astronomypictureoftheday.viewModel.ViewModelCallbacks;
@@ -34,6 +39,10 @@ public class MainActivity extends AppCompatActivity implements FragmentChangeLis
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        MobileAds.initialize(this,
+                "ca-app-pub-3940256099942544~3347511713");
+
         mToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.tb_main_activity);
         setSupportActionBar(mToolbar);
 

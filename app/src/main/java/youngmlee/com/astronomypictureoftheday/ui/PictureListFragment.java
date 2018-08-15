@@ -19,6 +19,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +33,7 @@ import youngmlee.com.astronomypictureoftheday.viewModel.SharedViewModel;
 public class PictureListFragment extends Fragment{
 
     private SharedViewModel mSharedViewModel;
+    private AdView mAdView;
     private RecyclerView mRecyclerView;
     private ListAdapter mListAdapter;
     private LinearLayoutManager mLinearLayoutManager;
@@ -55,6 +60,7 @@ public class PictureListFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_picture_list, container, false);
         connectRecyclerView(view);
         connectViewModel();
+        initializeAds(view);
         return view;
     }
 
@@ -105,6 +111,15 @@ public class PictureListFragment extends Fragment{
         };
 
         mRecyclerView.addOnScrollListener(mScrollListener);
+    }
+
+    private void initializeAds(View view){
+
+        mAdView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override
