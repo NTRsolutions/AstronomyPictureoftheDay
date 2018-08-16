@@ -1,25 +1,24 @@
 package youngmlee.com.astronomypictureoftheday.ui;
 
-import android.app.Activity;
-import android.app.Application;
 import android.arch.lifecycle.ViewModelProviders;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Fade;
-import android.transition.TransitionInflater;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toolbar;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
 import com.google.android.gms.ads.MobileAds;
 
 import youngmlee.com.astronomypictureoftheday.R;
+import youngmlee.com.astronomypictureoftheday.network.NotifyLatestJobService;
 import youngmlee.com.astronomypictureoftheday.viewModel.SharedViewModel;
 import youngmlee.com.astronomypictureoftheday.viewModel.ViewModelCallbacks;
 
@@ -29,14 +28,13 @@ public class MainActivity extends AppCompatActivity implements FragmentChangeLis
     private static final String TAG_PICTURE_LIST_FRAGMENT = "tag_picture_list_fragment";
     private static final String TAG_VIEW_PAGER_FRAGMENT = "tag_view_pager_fragment";
     private static final String TAG_FULL_SCREEN_FRAGMENT = "tag_full_screen_fragment";
-
+    private static final String TAG_NOTIFY_LATEST_JOB= "tag_notify_latest_job";
 
     private SharedViewModel mSharedViewModel;
     private android.support.v7.widget.Toolbar mToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -52,11 +50,29 @@ public class MainActivity extends AppCompatActivity implements FragmentChangeLis
                 return;
             }
         }
+        scheduleNotifyLatestJob();
         loadInitialData();
         loadInitialFragment();
     }
 
+    private void scheduleNotifyLatestJob(){
+        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
+        Job notifyLatestJob = dispatcher.newJobBuilder()
+                .setService(NotifyLatestJobService.class)
+                .setTag(TAG_NOTIFY_LATEST_JOB)
+                .setRecurring(true)
+                .setLifetime(Lifetime.UNTIL_NEXT_BOOT)
+                .setTrigger(Trigger.executionWindow(0, 5))
+                .setReplaceCurrent(true)
+                .setRetryStrategy(RetryStrategy.DEFAULT_LINEAR)
+                .build();
+        dispatcher.mustSchedule(notifyLatestJob);
+    }
 
+    private void cancelJob(){
+        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
+        dispatcher.cancelAll();
+    }
     private void loadInitialData(){
         mSharedViewModel.loadInitialData(new ViewModelCallbacks() {
             @Override
@@ -93,9 +109,6 @@ public class MainActivity extends AppCompatActivity implements FragmentChangeLis
                         PictureDetailViewPager.class.getSimpleName())
                 .addToBackStack(TAG_VIEW_PAGER_FRAGMENT)
                 .commit();
-
-
-
     }
 
     @Override
@@ -115,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements FragmentChangeLis
     }
 
     private void attachPictureListFragment() {
-
         PictureListFragment pictureListFragment = new PictureListFragment();
         pictureListFragment.setEnterTransition(new Fade());
         Bundle args = new Bundle();
@@ -142,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements FragmentChangeLis
         }else{
             super.onBackPressed();
         }
-
-
     }
+
 }

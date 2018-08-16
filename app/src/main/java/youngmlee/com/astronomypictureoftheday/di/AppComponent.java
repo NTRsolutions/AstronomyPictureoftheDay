@@ -7,8 +7,7 @@ import youngmlee.com.astronomypictureoftheday.viewModel.SharedViewModel;
 
 @Singleton
 @Component(modules = {AppModule.class, RepositoryModule.class, NetworkModule.class, DatabaseModule.class})
-public interface ViewModelComponent {
+public interface AppComponent {
 
     void inject(SharedViewModel sharedViewModel);
-
 }

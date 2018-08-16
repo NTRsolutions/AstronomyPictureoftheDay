@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -50,6 +51,16 @@ public class PictureFullScreenFragment extends Fragment {
     private FloatingActionButton mShareFab;
     private FloatingActionButton mWallpaperFab;
     private FloatingActionButton mSaveFab;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseAnalytics.getInstance(getContext())
+                .setCurrentScreen(
+                        getActivity(),
+                        this.getClass().getSimpleName(),
+                        this.getClass().getSimpleName());
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

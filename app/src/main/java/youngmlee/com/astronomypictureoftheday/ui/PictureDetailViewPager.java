@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +43,15 @@ public class PictureDetailViewPager extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseAnalytics.getInstance(getContext())
+                .setCurrentScreen(
+                        getActivity(),
+                        this.getClass().getSimpleName(),
+                        this.getClass().getSimpleName());
+    }
 
     @Nullable
     @Override

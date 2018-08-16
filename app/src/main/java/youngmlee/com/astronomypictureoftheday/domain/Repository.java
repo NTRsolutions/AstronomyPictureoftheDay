@@ -20,6 +20,7 @@ public class Repository {
 
     private RetrofitService retrofitService;
     private AppDao appDao;
+    private String latestDate;
 
 
     public Repository(RetrofitService retrofitService, AppDao appDao){
@@ -41,6 +42,7 @@ public class Repository {
                 Log.d("FLOW TEST", "ON RESPONSE RECEIVED IN REPOSITORY GETTING PICTURE: " + response.message() + " code: " + response.code());
                 Log.d("IMAGE TYPE", response.body().getUrl());
                 String endDate = response.body().getDate();
+                latestDate = endDate;
                 String startDate = DateUtil.subtractDays(endDate, 15);
                 retrievePictureList(startDate, endDate, repositoryCallbacks);
             }
@@ -86,7 +88,6 @@ public class Repository {
             }
         });
     }
-
 
     private void processPictures(List<Picture> pictures){
 

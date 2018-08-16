@@ -9,7 +9,8 @@ import android.util.Log;
 import java.util.List;
 import javax.inject.Inject;
 import youngmlee.com.astronomypictureoftheday.di.AppModule;
-import youngmlee.com.astronomypictureoftheday.di.DaggerViewModelComponent;
+
+import youngmlee.com.astronomypictureoftheday.di.DaggerAppComponent;
 import youngmlee.com.astronomypictureoftheday.di.DatabaseModule;
 import youngmlee.com.astronomypictureoftheday.di.NetworkModule;
 import youngmlee.com.astronomypictureoftheday.di.RepositoryModule;
@@ -28,7 +29,7 @@ public class SharedViewModel extends AndroidViewModel{
 
     public SharedViewModel(Application application){
         super(application);
-        DaggerViewModelComponent.builder()
+        DaggerAppComponent.builder()
                 .appModule(new AppModule(application))
                 .databaseModule(new DatabaseModule())
                 .networkModule(new NetworkModule())

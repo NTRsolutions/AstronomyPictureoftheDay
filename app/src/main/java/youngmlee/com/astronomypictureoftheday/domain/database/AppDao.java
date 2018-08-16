@@ -9,6 +9,8 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import youngmlee.com.astronomypictureoftheday.domain.model.Picture;
 
 @Dao
@@ -16,6 +18,9 @@ public interface AppDao {
 
     @Query("SELECT * FROM picture")
     LiveData<List<Picture>> getAll();
+
+    @Query("SELECT * FROM picture WHERE date LIKE :queryDate")
+    Picture getPictureByDate(String queryDate);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Picture> pictureList);

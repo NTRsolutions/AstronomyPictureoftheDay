@@ -33,6 +33,14 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <service
+            android:exported="false"
+            android:name=".network.NotifyLatestJobService">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

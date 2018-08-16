@@ -1,5 +1,6 @@
 package youngmlee.com.astronomypictureoftheday.domain.model;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
@@ -7,33 +8,42 @@ import android.support.annotation.NonNull;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-@Entity
+@Entity(tableName = "picture")
 public class Picture {
+
     @PrimaryKey
     @NonNull
     @SerializedName("date")
     @Expose
+    @ColumnInfo(name = "date")
     private String date;
     @SerializedName("copyright")
     @Expose
+    @ColumnInfo(name = "copyright")
     private String copyright;
     @SerializedName("explanation")
     @Expose
+    @ColumnInfo(name = "explanation")
     private String explanation;
     @SerializedName("hdurl")
     @Expose
+    @ColumnInfo(name = "hdurl")
     private String hdurl;
     @SerializedName("media_type")
     @Expose
+    @ColumnInfo(name = "media_type")
     private String mediaType;
     @SerializedName("service_version")
     @Expose
+    @ColumnInfo(name = "service_version")
     private String serviceVersion;
     @SerializedName("title")
     @Expose
+    @ColumnInfo(name = "title")
     private String title;
     @SerializedName("url")
     @Expose
+    @ColumnInfo(name = "url")
     private String url;
 
     public String getCopyright() {
@@ -99,4 +109,5 @@ public class Picture {
     public void setUrl(String url) {
         this.url = url;
     }
+
 }

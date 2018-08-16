@@ -1,7 +1,9 @@
 package youngmlee.com.astronomypictureoftheday.ui;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,6 +24,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,16 @@ public class PictureListFragment extends Fragment{
     private LinearLayoutManager mLinearLayoutManager;
     private String lastVisibleDate;
     private boolean isLoadingMoreData;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseAnalytics.getInstance(getContext())
+                .setCurrentScreen(
+                        getActivity(),
+                        this.getClass().getSimpleName(),
+                        this.getClass().getSimpleName());
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
