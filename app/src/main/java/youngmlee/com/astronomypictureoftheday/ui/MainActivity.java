@@ -1,6 +1,8 @@
 package youngmlee.com.astronomypictureoftheday.ui;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +10,6 @@ import android.transition.Fade;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
@@ -16,6 +17,8 @@ import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.RetryStrategy;
 import com.firebase.jobdispatcher.Trigger;
 import com.google.android.gms.ads.MobileAds;
+
+import java.util.concurrent.TimeUnit;
 
 import youngmlee.com.astronomypictureoftheday.R;
 import youngmlee.com.astronomypictureoftheday.network.NotifyLatestJobService;
@@ -32,47 +35,76 @@ public class MainActivity extends AppCompatActivity implements FragmentChangeLis
 
     private SharedViewModel mSharedViewModel;
     private android.support.v7.widget.Toolbar mToolbar;
+    private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MobileAds.initialize(this,
+        mSharedPreferences = getSharedPreferences(
+                getString(R.string.shared_preferences_key),
+                Context.MODE_PRIVATE);
+
+
+        boolean jobScheduled = mSharedPreferences.getBoolean(getString(R.string.scheduled_job_key), false);
+        Log.d("Job TEST", "" + jobScheduled);
+
+        if(!jobScheduled) {
+            Log.d("Job TEST", "JobScheduled");
+            scheduleNotifyLatestJob();
+
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            editor.putBoolean(getString(R.string.scheduled_job_key), true);
+            editor.apply();
+        }
+        //cancelAllJobs();
+
+        MobileAds.initialize(
+                this,
                 "ca-app-pub-3940256099942544~3347511713");
 
         mToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.tb_main_activity);
         setSupportActionBar(mToolbar);
 
         mSharedViewModel = ViewModelProviders.of(this).get(SharedViewModel.class);
+
         if (findViewById(R.id.fragment_container) != null){
             if(savedInstanceState != null){
                 return;
             }
         }
-        scheduleNotifyLatestJob();
+
         loadInitialData();
         loadInitialFragment();
+
     }
 
     private void scheduleNotifyLatestJob(){
+        int windowStart = (int) TimeUnit.HOURS.toSeconds(24);
+        int windowEnd = (int) TimeUnit.HOURS.toSeconds(25);
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
         Job notifyLatestJob = dispatcher.newJobBuilder()
                 .setService(NotifyLatestJobService.class)
                 .setTag(TAG_NOTIFY_LATEST_JOB)
                 .setRecurring(true)
-                .setLifetime(Lifetime.UNTIL_NEXT_BOOT)
-                .setTrigger(Trigger.executionWindow(0, 5))
+                .setLifetime(Lifetime.FOREVER)
+                .setTrigger(Trigger.executionWindow(windowStart, windowEnd))
                 .setReplaceCurrent(true)
-                .setRetryStrategy(RetryStrategy.DEFAULT_LINEAR)
+                .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
                 .build();
         dispatcher.mustSchedule(notifyLatestJob);
     }
 
-    private void cancelJob(){
+    private void cancelAllJobs(){
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
         dispatcher.cancelAll();
+
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putBoolean(getString(R.string.scheduled_job_key), false);
+        editor.apply();
     }
+
     private void loadInitialData(){
         mSharedViewModel.loadInitialData(new ViewModelCallbacks() {
             @Override

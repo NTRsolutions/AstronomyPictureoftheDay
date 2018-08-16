@@ -5,4 +5,7 @@
     <string name="channel_id">0</string>
     <string name="channel_name">Alert</string>
     <string name="channel_description">Be notified of new images</string>
+    <string name="shared_preferences_key">"youngmlee.com.astronomypictureoftheday.PREFERENCE_FILE_KEY"</string>
+    <string name="scheduled_job_key">scheduled_job_key</string>
+    <string name="set_automatic_wallpaper_key">set_automatic_wallpaper_key</string>
 </resources>
