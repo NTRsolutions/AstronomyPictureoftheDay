@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "40236745862",
+    "firebase_url": "https://astronomypictureoftheday-73525.firebaseio.com",
+    "project_id": "astronomypictureoftheday-73525",
+    "storage_bucket": "astronomypictureoftheday-73525.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40236745862:android:ae5ad863f368caac",
+        "android_client_info": {
+          "package_name": "youngmlee.com.astronomypictureoftheday"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "40236745862-50r0b0u6mlho884cupg5jmf1k5bfs695.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm84SD2oL6svVw1UERBgsPJD6r_rzXadg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
