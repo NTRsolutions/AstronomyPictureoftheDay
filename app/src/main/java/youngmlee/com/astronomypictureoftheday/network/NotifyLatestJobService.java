@@ -14,6 +14,11 @@ import com.firebase.jobdispatcher.JobService;
 
 import javax.inject.Inject;
 
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,28 +33,36 @@ public class NotifyLatestJobService extends JobService{
     @Inject
     public RetrofitService retrofitService;
     @Override
+
     public boolean onStartJob(JobParameters job) {
         DaggerServiceComponent.builder()
                 .networkModule(new NetworkModule())
                 .build()
                 .inject(this);
 
-        Call<Picture> call = retrofitService.getLatestPicture();
-        call.enqueue(new Callback<Picture>() {
-            @Override
-            public void onResponse(Call<Picture> call, Response<Picture> response) {
-                Picture latestPicture = response.body();
-                Log.d("NOTIFICATION TEST", "RESPONSE: " + response.message());
-                if(latestPicture.getMediaType().equals("image")) {
-                    showNotification(latestPicture);
-                }
-            }
+        Single<Picture> latestPicture = retrofitService.getLatestPicture();
+        latestPicture
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<Picture>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d("Rx", "Notification onSubscribe: ");
+                    }
 
-            @Override
-            public void onFailure(Call<Picture> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
+                    @Override
+                    public void onSuccess(Picture picture) {
+                        Log.d("Rx", "Notification onSuccess: ");
+                        if (picture.getMediaType().equals("image")) {
+                            showNotification(picture);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("Rx", "Notification onError: ");
+                    }
+                });
         return false;
     }
 

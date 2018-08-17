@@ -1,16 +1,24 @@
 package youngmlee.com.astronomypictureoftheday.domain;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
-import android.os.AsyncTask;
 import android.util.Log;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.Scheduler;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.SingleSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.schedulers.Schedulers;
 import youngmlee.com.astronomypictureoftheday.domain.database.AppDao;
 import youngmlee.com.astronomypictureoftheday.domain.model.Picture;
 import youngmlee.com.astronomypictureoftheday.network.RetrofitService;
@@ -27,69 +35,95 @@ public class Repository {
         this.retrofitService = retrofitService;
         this.appDao = appDao;
     }
+    
 
     public LiveData<List<Picture>> getPictureList(){
         return appDao.getAll();
     }
 
-    //First gets latestDate
-    //Second gets List using latestDate
-    public void retrieveData(final RepositoryCallbacks repositoryCallbacks){
-        Call<Picture> call = retrofitService.getLatestPicture();
-        call.enqueue(new Callback<Picture>() {
-            @Override
-            public void onResponse(Call<Picture> call, Response<Picture> response) {
-                Log.d("FLOW TEST", "ON RESPONSE RECEIVED IN REPOSITORY GETTING PICTURE: " + response.message() + " code: " + response.code());
-                Log.d("IMAGE TYPE", response.body().getUrl());
-                String endDate = response.body().getDate();
-                latestDate = endDate;
-                String startDate = DateUtil.subtractDays(endDate, 15);
-                retrievePictureList(startDate, endDate, repositoryCallbacks);
-            }
+    @SuppressLint("CheckResult")
+    public void retrieveLatestDateWithRx(final RepositoryCallbacks repositoryCallbacks){
+        Log.d("RX", "retrieveDataWithRX called");
+         final Single<List<Picture>> observablePictureList =
+                 retrofitService.getLatestPicture()
+                 .flatMap(new Function<Picture, SingleSource<List<Picture>>>() {
+                     @Override
+                     public SingleSource<List<Picture>> apply(Picture picture) throws Exception {
+                         String endDate = picture.getDate();
+                         String startDate = DateUtil.subtractDays(endDate, 25);
+                         return retrofitService.getPicturesFromDateRange(startDate, endDate);
+                     }
+                 })
+                 .flatMap(new Function<List<Picture>, SingleSource<List<Picture>>>() {
+                     @Override
+                     public SingleSource<List<Picture>> apply(List<Picture> pictureList) throws Exception {
+                         List<Picture> processedPictureList = processPictures(pictureList);
+                         return Single.just(processedPictureList);
+                     }
+                 });
 
-            @Override
-            public void onFailure(Call<Picture> call, Throwable t) {
-                Log.d("FLOW TEST", "ON FAILURE RECEIVED IN REPOSITORY GETTING PICTURE: " + t.getMessage());
-                t.printStackTrace();
-            }
-        });
+         observablePictureList
+                 .subscribeOn(Schedulers.io())
+                 .observeOn(Schedulers.io())
+                 .subscribe(new SingleObserver<List<Picture>>() {
+                     @Override
+                     public void onSubscribe(Disposable d) {
+                         Log.d("RX", "onSubscribe: " + d.toString());
+                     }
+
+                     @Override
+                     public void onSuccess(List<Picture> pictureList) {
+                         Log.d("RX", "onSuccess: " + pictureList.get(0).getDate() + " " + pictureList.get(pictureList.size()-1).getDate());
+                         appDao.insertAll(pictureList);
+                         repositoryCallbacks.onResponse("success");
+                     }
+
+                     @Override
+                     public void onError(Throwable e) {
+                         Log.d("RX", "onSubscribe: " + e.getMessage());
+                         repositoryCallbacks.onFailure(e);
+                     }
+                 });
+
     }
 
-    private void retrievePictureList(String startDate, String endDate, final RepositoryCallbacks repositoryCallbacks){
-        Call<List<Picture>> call = retrofitService.getPicturesFromDateRange(startDate, endDate);
-        call.enqueue(new Callback<List<Picture>>() {
-            @Override
-            public void onResponse(Call<List<Picture>> call, Response<List<Picture>> response) {
-                Log.d("FLOW TEST", "ON RESPONSE RECEIVED IN REPOSITORY GETTING LIST: " + response.message() + " code: " + response.code());
-                final List<Picture> pictureList = response.body();
-                processPictures(pictureList);
-                AsyncTask.execute(new Runnable() {
+    public void loadMoreDataWithRx(String lastVisibleDate){
+        String endDate = lastVisibleDate;
+        String startDate = DateUtil.subtractDays(endDate, 15);
+        Single<List<Picture>> pictureListSingle =
+                retrofitService.getPicturesFromDateRange(startDate, endDate)
+                .flatMap(new Function<List<Picture>, SingleSource<? extends List<Picture>>>() {
                     @Override
-                    public void run() {
-                        appDao.insertAll(pictureList);
+                    public SingleSource<? extends List<Picture>> apply(List<Picture> pictureList) throws Exception {
+                        List<Picture> processedList = processPictures(pictureList);
+                        return Single.just(processedList);
                     }
                 });
-                repositoryCallbacks.onResponse(response.message());
-            }
 
-            @Override
-            public void onFailure(Call<List<Picture>> call, Throwable t) {
-                Log.d("FLOW TEST", "ON FAILURE RECEIVED IN REPOSITORY GETTING LIST: " + t.getMessage());
-                repositoryCallbacks.onFailure(t);
-            }
-        });
+        pictureListSingle
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new SingleObserver<List<Picture>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d("RX", "onSubscribe: " + d.toString());
+                    }
+
+                    @Override
+                    public void onSuccess(List<Picture> pictureList) {
+                        Log.d("RX", "onSuccess: " + pictureList.get(0).getDate() + " " + pictureList.get(pictureList.size()-1).getDate());
+                        appDao.insertAll(pictureList);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("RX", "onSubscribe: " + e.getMessage());
+                    }
+                });
+
+
     }
-
-    public void clearDatabase(){
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                appDao.deleteAll();
-            }
-        });
-    }
-
-    private void processPictures(List<Picture> pictures){
+    private List<Picture> processPictures(List<Picture> pictures){
 
         Collections.reverse(pictures);
         for (Iterator<Picture> iterator = pictures.iterator(); iterator.hasNext();) {
@@ -98,31 +132,19 @@ public class Repository {
                 iterator.remove();
             }
         }
+        return pictures;
     }
 
-    public void loadMoreData(String lastVisibleDate){
-        String endDate = lastVisibleDate;
-        String startDate = DateUtil.subtractDays(endDate, 15);
-        Call<List<Picture>> call = retrofitService.getPicturesFromDateRange(startDate, endDate);
-        call.enqueue(new Callback<List<Picture>>() {
+    public void clearDatabase() {
+        Completable.fromAction(new Action() {
             @Override
-            public void onResponse(Call<List<Picture>> call, Response<List<Picture>> response) {
-                Log.d("SCROLLTEST", "MORE DATA ONRESPONSE" + response.code());
-                final List<Picture> pictureList = response.body();
-                processPictures(pictureList);
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        appDao.insertAll(pictureList);
-                    }
-                });
+            public void run() throws Exception {
+                appDao.deleteAll();
             }
-
-            @Override
-            public void onFailure(Call<List<Picture>> call, Throwable t) {
-
-            }
-        });
+        })
+                .subscribeOn(Schedulers.io())
+                .subscribe();
     }
+
 
 }

@@ -2,16 +2,11 @@ package youngmlee.com.astronomypictureoftheday.ui;
 
 import android.Manifest;
 import android.app.WallpaperManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -89,7 +84,6 @@ public class PictureFullScreenFragment extends Fragment {
         mSaveFab = (FloatingActionButton) view.findViewById(R.id.fab_save) ;
         connectButtons();
         Picasso.get().load(mImageUrl).fit().centerInside().into(mFullScreenPhotoView);
-        //Glide.with(this).load(mImageUrl).into(mFullScreenPhotoView);
         return view;
     }
 

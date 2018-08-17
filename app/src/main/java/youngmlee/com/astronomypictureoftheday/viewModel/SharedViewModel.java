@@ -68,7 +68,7 @@ public class SharedViewModel extends AndroidViewModel{
 
     public void loadInitialData(final ViewModelCallbacks viewModelCallbacks){
         Log.d("FLOW TEST", " LOAD DATA IN VM CALLED");
-        repository.retrieveData(new RepositoryCallbacks() {
+        repository.retrieveLatestDateWithRx(new RepositoryCallbacks() {
             @Override
             public void onResponse(String message) {
                 Log.d("FLOW TEST", "ON RESPONSE RECEIVED IN VIEWMODEL: " + message);
@@ -87,7 +87,7 @@ public class SharedViewModel extends AndroidViewModel{
     }
 
     public void loadMoreData(String lastVisibleDate){
-        repository.loadMoreData(lastVisibleDate);
+        repository.loadMoreDataWithRx(lastVisibleDate);
     }
 
 

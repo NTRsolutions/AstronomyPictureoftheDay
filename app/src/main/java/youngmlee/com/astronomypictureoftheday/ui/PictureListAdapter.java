@@ -1,7 +1,6 @@
 package youngmlee.com.astronomypictureoftheday.ui;
 
 import android.content.Context;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.support.v7.util.DiffUtil;
@@ -11,14 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import youngmlee.com.astronomypictureoftheday.R;
 import youngmlee.com.astronomypictureoftheday.domain.model.Picture;
-import youngmlee.com.astronomypictureoftheday.utils.ImageUtil;
 import youngmlee.com.astronomypictureoftheday.utils.NetworkUtil;
 
 public class PictureListAdapter extends ListAdapter<Picture, PictureListAdapter.ViewHolder> {
@@ -52,7 +47,6 @@ public class PictureListAdapter extends ListAdapter<Picture, PictureListAdapter.
         });
         String url = NetworkUtil.validateUrl(picture.getUrl());
         Picasso.get().load(url).fit().centerCrop().into(viewHolder.mPictureImageView);
-        //Glide.with(mContext).load(url).apply(ImageUtil.getListImageRequestOptions()).into(viewHolder.mPictureImageView);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
