@@ -78,7 +78,7 @@ public class PictureListFragment extends Fragment{
 
         View view = inflater.inflate(R.layout.fragment_picture_list, container, false);
 
-        mProgressBar = (ProgressBar) view.findViewById(R.id.pb_loading_list);
+        mProgressBar = view.findViewById(R.id.pb_loading_list);
 
         connectRecyclerView(view);
 

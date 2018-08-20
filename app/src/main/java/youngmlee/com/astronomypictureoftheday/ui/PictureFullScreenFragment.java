@@ -74,10 +74,10 @@ public class PictureFullScreenFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_picture_fullscreen, container, false);
 
-        mFullScreenPhotoView = (PhotoView) view.findViewById(R.id.pv_picture_fullscreen);
-        mShareFab = (FloatingActionButton) view.findViewById(R.id.fab_share);
-        mWallpaperFab = (FloatingActionButton) view.findViewById(R.id.fab_set_as_wallpaper);
-        mSaveFab = (FloatingActionButton) view.findViewById(R.id.fab_save) ;
+        mFullScreenPhotoView = view.findViewById(R.id.pv_picture_fullscreen);
+        mShareFab = view.findViewById(R.id.fab_share);
+        mWallpaperFab = view.findViewById(R.id.fab_set_as_wallpaper);
+        mSaveFab = view.findViewById(R.id.fab_save);
 
         if(getArguments() != null){
             mImageUrl = getArguments().getString(EXTRA_KEY_IMAGE_URL);
@@ -230,10 +230,7 @@ public class PictureFullScreenFragment extends Fragment {
     }
     private boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     private void requestWritePermission(){

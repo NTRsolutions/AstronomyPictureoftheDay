@@ -38,7 +38,7 @@ public class Repository {
                  retrofitService.getLatestPicture()
                  .flatMap(new Function<Picture, SingleSource<List<Picture>>>() {
                      @Override
-                     public SingleSource<List<Picture>> apply(Picture picture) throws Exception {
+                     public SingleSource<List<Picture>> apply(Picture picture) {
                          String endDate = picture.getDate();
                          String startDate = DateUtil.subtractDays(endDate, 25);
                          return retrofitService.getPicturesFromDateRange(startDate, endDate);
@@ -46,7 +46,7 @@ public class Repository {
                  })
                  .flatMap(new Function<List<Picture>, SingleSource<List<Picture>>>() {
                      @Override
-                     public SingleSource<List<Picture>> apply(List<Picture> pictureList) throws Exception {
+                     public SingleSource<List<Picture>> apply(List<Picture> pictureList) {
                          List<Picture> processedPictureList = processPictures(pictureList);
                          return Single.just(processedPictureList);
                      }
@@ -86,7 +86,7 @@ public class Repository {
                 retrofitService.getPicturesFromDateRange(startDate, endDate)
                 .flatMap(new Function<List<Picture>, SingleSource<? extends List<Picture>>>() {
                     @Override
-                    public SingleSource<? extends List<Picture>> apply(List<Picture> pictureList) throws Exception {
+                    public SingleSource<? extends List<Picture>> apply(List<Picture> pictureList) {
                         List<Picture> processedList = processPictures(pictureList);
                         return Single.just(processedList);
                     }
@@ -129,7 +129,7 @@ public class Repository {
     public void clearDatabase() {
         Completable.fromAction(new Action() {
             @Override
-            public void run() throws Exception {
+            public void run() {
                 appDao.deleteAll();
             }
         })

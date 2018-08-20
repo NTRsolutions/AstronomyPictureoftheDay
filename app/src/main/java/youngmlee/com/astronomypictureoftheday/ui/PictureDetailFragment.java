@@ -39,10 +39,10 @@ public class PictureDetailFragment extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_picture_detail, container, false);
-        mDescriptionTextView = (TextView) view.findViewById(R.id.tv_detail_description);
-        mDetailPictureImageView = (ImageView) view.findViewById(R.id.iv_detail_picture);
-        mTitleTextView = (TextView) view.findViewById(R.id.tv_title);
-        mCopyrightTextView = (TextView) view.findViewById(R.id.tv_copyright);
+        mDescriptionTextView = view.findViewById(R.id.tv_detail_description);
+        mDetailPictureImageView = view.findViewById(R.id.iv_detail_picture);
+        mTitleTextView = view.findViewById(R.id.tv_title);
+        mCopyrightTextView = view.findViewById(R.id.tv_copyright);
 
         if(getArguments() != null) {
             mPosition = getArguments().getInt(EXTRA_KEY_PICTURE_POSITION);

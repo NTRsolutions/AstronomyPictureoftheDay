@@ -20,7 +20,7 @@ public class DateUtil {
         DateFormat formatter = new SimpleDateFormat(dateFormat, Locale.US);
         Date date = null;
         try {
-            date = (Date) formatter.parse(currentDate);
+            date = formatter.parse(currentDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements FragmentChangeLis
                 this,
                 "ca-app-pub-3940256099942544~3347511713");
 
-        mToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.tb_main_activity);
+        mToolbar = findViewById(R.id.tb_main_activity);
         setSupportActionBar(mToolbar);
 
         mSharedViewModel = ViewModelProviders.of(this).get(SharedViewModel.class);
