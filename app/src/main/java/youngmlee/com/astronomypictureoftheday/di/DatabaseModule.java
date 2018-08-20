@@ -13,7 +13,6 @@ import youngmlee.com.astronomypictureoftheday.domain.database.AppDatabase;
 @Module
 public class DatabaseModule {
 
-
     @Provides
     @Singleton
     AppDatabase provideAppDatabase(Application application){
@@ -23,7 +22,6 @@ public class DatabaseModule {
                 .build();
         return appDatabase;
     }
-
 
     @Provides
     @Singleton

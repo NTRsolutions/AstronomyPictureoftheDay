@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -25,6 +26,7 @@ public class PictureDetailViewPager extends Fragment {
 
     private ViewPager mViewPager;
     private ScreenSlidePagerAdapter mPagerAdapter;
+    private ProgressBar mProgressBar;
     private SharedViewModel mSharedViewModel;
     private String lastVisibleDate;
     private boolean isLoadingMoreData;
@@ -47,6 +49,13 @@ public class PictureDetailViewPager extends Fragment {
                         getActivity(),
                         this.getClass().getSimpleName(),
                         this.getClass().getSimpleName());
+
+        if(isLoadingMoreData){
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+        else{
+            mProgressBar.setVisibility(View.GONE);
+        }
     }
 
     @Nullable
@@ -55,11 +64,18 @@ public class PictureDetailViewPager extends Fragment {
         if(getArguments() != null){
             initialClickedPosition = getArguments().getInt(EXTRA_KEY_CLICKED_POSITION);
         }
+
         mSharedViewModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+
         View view = inflater.inflate(R.layout.fragment_picture_detail_view_pager, container, false);
+
         mViewPager = view.findViewById(R.id.vp_picture_detail);
+        mProgressBar = view.findViewById(R.id.pb_loading_viewpager);
+
         connectViewModel();
+
         connectPageChangeListener();
+
         return view;
     }
 
@@ -69,15 +85,18 @@ public class PictureDetailViewPager extends Fragment {
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-
     private void connectViewModel(){
         mSharedViewModel.getPictureList().observe(this, new Observer<List<Picture>>() {
             @Override
             public void onChanged(@Nullable List<Picture> pictureList) {
                 isLoadingMoreData = false;
+                mProgressBar.setVisibility(View.GONE);
+
                 lastVisibleDate = pictureList.get(pictureList.size()-1).getDate();
+
                 mPagerAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager(), pictureList);
                 mViewPager.setAdapter(mPagerAdapter);
+
                 setCurrentPage();
             }
         });
@@ -86,7 +105,6 @@ public class PictureDetailViewPager extends Fragment {
     private void setCurrentPage(){
         mViewPager.setCurrentItem(mSharedViewModel.getCurrentPosition());
     }
-
 
     private void connectPageChangeListener(){
         ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -100,7 +118,9 @@ public class PictureDetailViewPager extends Fragment {
                 mSharedViewModel.setCurrentPosition(i);
                 if(!isLoadingMoreData &&(i == (mPagerAdapter.getCount()) - 1)){
                     mSharedViewModel.loadMoreData(lastVisibleDate);
+
                     isLoadingMoreData = true;
+                    mProgressBar.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -114,7 +134,7 @@ public class PictureDetailViewPager extends Fragment {
 
     @Override
     public void onPause() {
-       // mViewPager.clearOnPageChangeListeners();
+        mViewPager.clearOnPageChangeListeners();
         super.onPause();
     }
 

@@ -19,30 +19,37 @@ public class Picture {
     @Expose
     @ColumnInfo(name = "date")
     private String date;
+
     @SerializedName("copyright")
     @Expose
     @ColumnInfo(name = "copyright")
     private String copyright;
+
     @SerializedName("explanation")
     @Expose
     @ColumnInfo(name = "explanation")
     private String explanation;
+
     @SerializedName("hdurl")
     @Expose
     @ColumnInfo(name = "hdurl")
     private String hdurl;
+
     @SerializedName("media_type")
     @Expose
     @ColumnInfo(name = "media_type")
     private String mediaType;
+
     @SerializedName("service_version")
     @Expose
     @ColumnInfo(name = "service_version")
     private String serviceVersion;
+
     @SerializedName("title")
     @Expose
     @ColumnInfo(name = "title")
     private String title;
+
     @SerializedName("url")
     @Expose
     @ColumnInfo(name = "url")

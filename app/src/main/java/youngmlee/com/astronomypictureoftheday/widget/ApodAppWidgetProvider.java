@@ -46,6 +46,7 @@ public class ApodAppWidgetProvider extends AppWidgetProvider{
         Single<Picture> latestPicture = mRetrofitService.getLatestPicture();
         latestPicture.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .retry(2)
                 .subscribe(new SingleObserver<Picture>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -60,9 +61,12 @@ public class ApodAppWidgetProvider extends AppWidgetProvider{
                             int appWidgetId = appWidgetIds[i];
                             Intent intent = new Intent(context, MainActivity.class);
                             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
                             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
                             views.setOnClickPendingIntent(R.id.iv_widget, pendingIntent);
+
                             Picasso.get().load(picture.getUrl()).into(views, R.id.iv_widget, new int[] {appWidgetId});
+
                             appWidgetManager.updateAppWidget(appWidgetId, views);
                         }
                     }
@@ -72,8 +76,6 @@ public class ApodAppWidgetProvider extends AppWidgetProvider{
                         Log.d("RX", "Widget onError");
                     }
                 });
-
-
         }
 
 }

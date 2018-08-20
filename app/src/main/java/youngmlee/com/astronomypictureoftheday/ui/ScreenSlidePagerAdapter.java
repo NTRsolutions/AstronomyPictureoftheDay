@@ -21,9 +21,11 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int i) {
         PictureDetailFragment pictureDetailFragment = new PictureDetailFragment();
+
         Bundle args = new Bundle();
         args.putInt(PictureDetailFragment.EXTRA_KEY_PICTURE_POSITION, i);
         pictureDetailFragment.setArguments(args);
+
         return pictureDetailFragment;
     }
 

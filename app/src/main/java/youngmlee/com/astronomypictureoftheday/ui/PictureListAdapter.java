@@ -20,7 +20,6 @@ public class PictureListAdapter extends ListAdapter<Picture, PictureListAdapter.
     private Context mContext;
     private FragmentChangeListener mFragmentChangeListener;
 
-
     protected PictureListAdapter(Context context, @NonNull DiffUtil.ItemCallback<Picture> diffCallback) {
         super(diffCallback);
         mContext = context;
@@ -39,12 +38,14 @@ public class PictureListAdapter extends ListAdapter<Picture, PictureListAdapter.
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
         final Picture picture = getItem(i);
         final int position = viewHolder.getAdapterPosition();
+
         viewHolder.mPictureCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mFragmentChangeListener.attachDetailViewPager(position, viewHolder.mPictureImageView);
             }
         });
+
         String url = NetworkUtil.validateUrl(picture.getUrl());
         Picasso.get().load(url).fit().centerCrop().into(viewHolder.mPictureImageView);
     }

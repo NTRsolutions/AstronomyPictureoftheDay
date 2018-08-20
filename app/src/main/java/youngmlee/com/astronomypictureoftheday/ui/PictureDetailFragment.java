@@ -47,8 +47,11 @@ public class PictureDetailFragment extends Fragment{
         if(getArguments() != null) {
             mPosition = getArguments().getInt(EXTRA_KEY_PICTURE_POSITION);
         }
+
         fragmentChangeListener = (MainActivity) getActivity();
+
         connectViewModel();
+
         return view;
     }
 
@@ -64,17 +67,18 @@ public class PictureDetailFragment extends Fragment{
     }
 
     private void updateUi(List<Picture> pictureList){
-        String url = NetworkUtil.validateUrl(pictureList.get(mPosition).getUrl());
-        Picasso.get().load(url).fit().centerCrop().into(mDetailPictureImageView);
         mDescriptionTextView.setText(pictureList.get(mPosition).getExplanation());
         mTitleTextView.setText(pictureList.get(mPosition).getTitle());
+
+        String url = NetworkUtil.validateUrl(pictureList.get(mPosition).getUrl());
+        Picasso.get().load(url).fit().centerCrop().into(mDetailPictureImageView);
+
         if(pictureList.get(mPosition).getCopyright() != null) {
             mCopyrightTextView.setText(pictureList.get(mPosition).getCopyright());
         }
         else{
             mCopyrightTextView.setVisibility(View.GONE);
         }
-        //Glide.with(getContext()).load(url).apply(ImageUtil.getDetailImageRequestOptions()).into(mDetailPictureImageView);
     }
 
     private void connectImageViewOnClickListener(final List<Picture> pictureList){

@@ -45,7 +45,15 @@
 
         <service
             android:exported="false"
-            android:name=".network.NotifyLatestJobService">
+            android:name=".service.NotifyLatestJobService">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:exported="false"
+            android:name=".service.UpdateWallpaperJobService">
             <intent-filter>
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
             </intent-filter>

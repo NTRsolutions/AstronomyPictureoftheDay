@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-
     >
 
     <com.github.chrisbanes.photoview.PhotoView
+        android:contentDescription="@string/image_content_description"
         android:id="@+id/pv_picture_fullscreen"
         android:layout_width="0dp"
         android:layout_height="0dp"

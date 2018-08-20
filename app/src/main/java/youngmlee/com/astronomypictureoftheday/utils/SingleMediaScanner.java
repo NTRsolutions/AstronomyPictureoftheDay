@@ -5,10 +5,12 @@ import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 
 public class SingleMediaScanner implements MediaScannerConnection.MediaScannerConnectionClient {
+
     private MediaScannerConnection mMediaScannerConnection;
     private File mFile;
 
@@ -18,6 +20,7 @@ public class SingleMediaScanner implements MediaScannerConnection.MediaScannerCo
         mMediaScannerConnection = new MediaScannerConnection(context, this);
         mMediaScannerConnection.connect();
     }
+
     @Override
     public void onMediaScannerConnected() {
         mMediaScannerConnection.scanFile(mFile.getAbsolutePath(), null);

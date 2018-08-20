@@ -7,12 +7,4 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-
-    <style name="MyActionBar" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="android:background">@android:color/transparent</item>
-        <!-- Support library compatibility -->
-        <item name="background">@android:color/transparent</item>
-
-    </style>
-
 </resources>

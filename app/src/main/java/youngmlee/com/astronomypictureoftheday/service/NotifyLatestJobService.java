@@ -1,4 +1,4 @@
-package youngmlee.com.astronomypictureoftheday.network;
+package youngmlee.com.astronomypictureoftheday.service;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -26,6 +26,7 @@ import youngmlee.com.astronomypictureoftheday.R;
 import youngmlee.com.astronomypictureoftheday.di.DaggerServiceComponent;
 import youngmlee.com.astronomypictureoftheday.di.NetworkModule;
 import youngmlee.com.astronomypictureoftheday.domain.model.Picture;
+import youngmlee.com.astronomypictureoftheday.network.RetrofitService;
 import youngmlee.com.astronomypictureoftheday.ui.MainActivity;
 
 public class NotifyLatestJobService extends JobService{
@@ -44,6 +45,7 @@ public class NotifyLatestJobService extends JobService{
         latestPicture
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .retry(2)
                 .subscribe(new SingleObserver<Picture>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -77,8 +79,10 @@ public class NotifyLatestJobService extends JobService{
             CharSequence name = getApplication().getString(R.string.channel_name);
             String description = getApplication().getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
             NotificationChannel channel = new NotificationChannel(channel_id, name, importance);
             channel.setDescription(description);
+
             NotificationManager notificationManager = getApplication().getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
@@ -88,8 +92,11 @@ public class NotifyLatestJobService extends JobService{
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         Log.d("NOTIFICATION TEST", "NOTIFYING:" + picture.getTitle());
+
         createNotificationChannel();
+
         String channel_id = getApplication().getString(R.string.channel_id);
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplication(), channel_id)
                 .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentTitle(picture.getTitle())

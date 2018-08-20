@@ -13,13 +13,14 @@
             android:background="@drawable/scrim_detail_image">
 
             <ImageView
+                android:contentDescription="@string/image_content_description"
                 android:id="@+id/iv_detail_picture"
                 android:layout_width="match_parent"
-                android:layout_height="350dp" />
+                android:layout_height="@dimen/detail_image_height" />
             <View
                 android:background="@drawable/scrim_detail_image"
                 android:layout_width="match_parent"
-                android:layout_height="350dp"/>
+                android:layout_height="@dimen/detail_image_height"/>
 
 
             <LinearLayout

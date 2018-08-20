@@ -10,11 +10,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.support.v7.util.DiffUtil;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -30,20 +32,30 @@ public class PictureListFragment extends Fragment{
 
     private SharedViewModel mSharedViewModel;
     private AdView mAdView;
+    private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
-    private ListAdapter mListAdapter;
+    private GridLayoutManager mGridLayoutManager;
     private LinearLayoutManager mLinearLayoutManager;
+    private ListAdapter mListAdapter;
     private String lastVisibleDate;
     private boolean isLoadingMoreData;
 
     @Override
     public void onResume() {
         super.onResume();
+
         FirebaseAnalytics.getInstance(getContext())
                 .setCurrentScreen(
                         getActivity(),
                         this.getClass().getSimpleName(),
                         this.getClass().getSimpleName());
+
+        if(isLoadingMoreData){
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+        else{
+            mProgressBar.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -63,10 +75,17 @@ public class PictureListFragment extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mSharedViewModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+
         View view = inflater.inflate(R.layout.fragment_picture_list, container, false);
+
+        mProgressBar = (ProgressBar) view.findViewById(R.id.pb_loading_list);
+
         connectRecyclerView(view);
+
         connectViewModel();
+
         initializeAds(view);
+
         return view;
     }
 
@@ -75,18 +94,21 @@ public class PictureListFragment extends Fragment{
             @Override
             public void onChanged(@Nullable List<Picture> pictureList) {
                 isLoadingMoreData = false;
+                mProgressBar.setVisibility(View.GONE);
+
                 mListAdapter.submitList(pictureList);
                 if(mSharedViewModel.hasAccessedViewPager()) {
                     mRecyclerView.scrollToPosition(mSharedViewModel.getCurrentPosition());
                     mSharedViewModel.setHasAccessedViewPager(false);
                 }
+
                 lastVisibleDate = pictureList.get(pictureList.size()-1).getDate();
             }
         });
     }
 
     private void connectRecyclerView(View view) {
-
+        mRecyclerView = view.findViewById(R.id.rv_pictures);
         mListAdapter = new PictureListAdapter(getActivity(), new DiffUtil.ItemCallback<Picture>() {
             @Override
             public boolean areItemsTheSame(@NonNull Picture picture, @NonNull Picture t1) {
@@ -99,19 +121,35 @@ public class PictureListFragment extends Fragment{
             }
         });
 
-        mRecyclerView = view.findViewById(R.id.rv_pictures);
-        mLinearLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        if(getResources().getBoolean(R.bool.isTablet)){
+            mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+            mRecyclerView.setLayoutManager(mGridLayoutManager);
+        }
+        else{
+            mLinearLayoutManager = new LinearLayoutManager(getActivity());
+            mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        }
+
         mRecyclerView.setAdapter(mListAdapter);
 
         RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int lastVisiblePosition = mLinearLayoutManager.findLastVisibleItemPosition();
+
+                int lastVisiblePosition;
+                if(getResources().getBoolean(R.bool.isTablet)){
+                    lastVisiblePosition = mGridLayoutManager.findLastCompletelyVisibleItemPosition();
+                }
+                else{
+                    lastVisiblePosition = mLinearLayoutManager.findLastCompletelyVisibleItemPosition();
+                }
+
                 if (!isLoadingMoreData && (lastVisiblePosition == (mListAdapter.getItemCount() - 1))) {
                     mSharedViewModel.loadMoreData(lastVisibleDate);
+
                     isLoadingMoreData = true;
+                    mProgressBar.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -125,17 +163,18 @@ public class PictureListFragment extends Fragment{
     }
 
     private void initializeAds(View view){
-
         mAdView = view.findViewById(R.id.adView);
+
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
+
         mAdView.loadAd(adRequest);
     }
 
     @Override
     public void onPause() {
-        //mRecyclerView.clearOnScrollListeners();
+        mRecyclerView.clearOnScrollListeners();
         super.onPause();
     }
 }

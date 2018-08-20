@@ -73,17 +73,21 @@ public class PictureFullScreenFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_picture_fullscreen, container, false);
+
         mFullScreenPhotoView = (PhotoView) view.findViewById(R.id.pv_picture_fullscreen);
+        mShareFab = (FloatingActionButton) view.findViewById(R.id.fab_share);
+        mWallpaperFab = (FloatingActionButton) view.findViewById(R.id.fab_set_as_wallpaper);
+        mSaveFab = (FloatingActionButton) view.findViewById(R.id.fab_save) ;
 
         if(getArguments() != null){
             mImageUrl = getArguments().getString(EXTRA_KEY_IMAGE_URL);
             mImageUrl = NetworkUtil.validateUrl(mImageUrl);
         }
-        mShareFab = (FloatingActionButton) view.findViewById(R.id.fab_share);
-        mWallpaperFab = (FloatingActionButton) view.findViewById(R.id.fab_set_as_wallpaper);
-        mSaveFab = (FloatingActionButton) view.findViewById(R.id.fab_save) ;
+
         connectButtons();
+
         Picasso.get().load(mImageUrl).fit().centerInside().into(mFullScreenPhotoView);
+
         return view;
     }
 
@@ -130,6 +134,7 @@ public class PictureFullScreenFragment extends Fragment {
 
     private void onSetWallPaper(){
         Picasso.get().load(mImageUrl).into(new Target() {
+
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());
@@ -147,6 +152,7 @@ public class PictureFullScreenFragment extends Fragment {
 
     private void onSaveImage(){
         Picasso.get().load(mImageUrl).into(new Target() {
+
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 saveBitmapToExternal(bitmap);
@@ -253,4 +259,5 @@ public class PictureFullScreenFragment extends Fragment {
             }
         }
     }
+
 }

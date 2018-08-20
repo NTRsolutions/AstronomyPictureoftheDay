@@ -1,23 +1,17 @@
 package youngmlee.com.astronomypictureoftheday.domain;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.util.Log;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import io.reactivex.Completable;
-import io.reactivex.CompletableObserver;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleSource;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
-import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import youngmlee.com.astronomypictureoftheday.domain.database.AppDao;
 import youngmlee.com.astronomypictureoftheday.domain.model.Picture;
@@ -28,23 +22,19 @@ public class Repository {
 
     private RetrofitService retrofitService;
     private AppDao appDao;
-    private String latestDate;
-
 
     public Repository(RetrofitService retrofitService, AppDao appDao){
         this.retrofitService = retrofitService;
         this.appDao = appDao;
     }
-    
 
     public LiveData<List<Picture>> getPictureList(){
         return appDao.getAll();
     }
 
-    @SuppressLint("CheckResult")
-    public void retrieveLatestDateWithRx(final RepositoryCallbacks repositoryCallbacks){
+    public void retrieveLatestData(final RepositoryCallbacks repositoryCallbacks){
         Log.d("RX", "retrieveDataWithRX called");
-         final Single<List<Picture>> observablePictureList =
+         Single<List<Picture>> observablePictureList =
                  retrofitService.getLatestPicture()
                  .flatMap(new Function<Picture, SingleSource<List<Picture>>>() {
                      @Override
@@ -65,6 +55,7 @@ public class Repository {
          observablePictureList
                  .subscribeOn(Schedulers.io())
                  .observeOn(Schedulers.io())
+                 .retry(2)
                  .subscribe(new SingleObserver<List<Picture>>() {
                      @Override
                      public void onSubscribe(Disposable d) {
@@ -87,9 +78,10 @@ public class Repository {
 
     }
 
-    public void loadMoreDataWithRx(String lastVisibleDate){
+    public void loadMoreData(String lastVisibleDate){
         String endDate = lastVisibleDate;
         String startDate = DateUtil.subtractDays(endDate, 15);
+
         Single<List<Picture>> pictureListSingle =
                 retrofitService.getPicturesFromDateRange(startDate, endDate)
                 .flatMap(new Function<List<Picture>, SingleSource<? extends List<Picture>>>() {
@@ -103,6 +95,7 @@ public class Repository {
         pictureListSingle
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
+                .retry(2)
                 .subscribe(new SingleObserver<List<Picture>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -120,11 +113,9 @@ public class Repository {
                         Log.d("RX", "onSubscribe: " + e.getMessage());
                     }
                 });
-
-
     }
-    private List<Picture> processPictures(List<Picture> pictures){
 
+    private List<Picture> processPictures(List<Picture> pictures){
         Collections.reverse(pictures);
         for (Iterator<Picture> iterator = pictures.iterator(); iterator.hasNext();) {
             Picture picture = iterator.next();
@@ -145,6 +136,5 @@ public class Repository {
                 .subscribeOn(Schedulers.io())
                 .subscribe();
     }
-
 
 }
