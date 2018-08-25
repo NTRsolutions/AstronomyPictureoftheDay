@@ -67,6 +67,7 @@ public class PictureFullScreenFragment extends Fragment {
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
     }
 
     @Nullable

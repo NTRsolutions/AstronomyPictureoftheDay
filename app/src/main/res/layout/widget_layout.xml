@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <ImageView
+        android:contentDescription="@string/image_content_description"
         android:id="@+id/iv_widget"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

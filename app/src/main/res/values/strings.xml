@@ -2,6 +2,11 @@
     <string name="app_name">Astronomy Picture of the Day</string>
     <string name="picture_transition">Picture Transition</string>
     <string name="about_header">ABOUT THIS PICTURE</string>
+
+    <string name="save_button_description">Save this image to your device</string>
+    <string name="share_button_description">Share this image</string>
+    <string name="wallpaper_button_description">Set this image as your device wallpaper</string>
+
     <string name="channel_id">0</string>
     <string name="channel_name">Alert</string>
     <string name="channel_description">Be notified of new images</string>

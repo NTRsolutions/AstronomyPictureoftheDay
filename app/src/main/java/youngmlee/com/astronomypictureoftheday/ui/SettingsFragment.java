@@ -48,6 +48,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
     }
 
     @Override

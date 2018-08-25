@@ -69,6 +69,8 @@ public class PictureListFragment extends Fragment{
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setTitle(R.string.app_name);
+        actionBar.setLogo(R.mipmap.ic_launcher);
+        actionBar.setDisplayUseLogoEnabled(true);
     }
 
     @Nullable

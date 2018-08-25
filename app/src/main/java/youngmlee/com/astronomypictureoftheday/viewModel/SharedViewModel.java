@@ -36,7 +36,7 @@ public class SharedViewModel extends AndroidViewModel{
                 .repositoryModule(new RepositoryModule())
                 .build()
                 .inject(this);
-        //TODO DO SOMETHING ABOUT THIS
+
         repository.clearDatabase();
     }
 

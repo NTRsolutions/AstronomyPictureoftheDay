@@ -83,6 +83,7 @@ public class PictureDetailViewPager extends Fragment {
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
     }
 
     private void connectViewModel(){
